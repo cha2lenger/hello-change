@@ -5,6 +5,10 @@ package org.hellochange.cash;
 
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.hellochange.cash.change.ChangeProducerStrategy;
+import org.hellochange.cash.change.DpChangeProducerStrategy;
+import org.hellochange.cash.change.Solution;
+
 /**
  * Simple thread-safe implementation of cash register.
  * 
@@ -12,68 +16,78 @@ import java.util.concurrent.atomic.AtomicReference;
  *
  */
 public class SimpleCashRegister implements CashRegister {
-	/** Mutable but protected state of the cash register. */
-	private final AtomicReference<Cash> cashRef;
-	
-	/**
-	 * Default constructor which creates empty cash register.
-	 */
-	public SimpleCashRegister() {
-		this.cashRef = new AtomicReference<>(Cash.EMPTY);
-	}
+  /** Mutable but protected state of the cash register. */
+  private final AtomicReference<Cash> cashRef;
+  /** Change producer strategy. */
+  private final ChangeProducerStrategy changeProducer;
 
-	/**
-	 * Constructor which creates cash register with the cash passed in as parameter.
-	 */
-	public SimpleCashRegister(final Cash cash) {
-		if (cash == null) {
-			throw new IllegalArgumentException(" Null has been passed in as required parameter: cash");
-		}
-		
-		this.cashRef = new AtomicReference<>(cash);
-	}	
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Cash getContents() {
-		return this.cashRef.get();
-	}
+  /**
+   * Default constructor which creates empty cash register.
+   */
+  public SimpleCashRegister() {
+    this.cashRef = new AtomicReference<>(Cash.EMPTY);
+    this.changeProducer = new DpChangeProducerStrategy();
+  }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Cash add(Cash cash) {
-        Cash prev, next;
-        do {
-            prev = this.cashRef.get(); 
-            next = prev.add(cash);
-        } while (!this.cashRef.compareAndSet(prev, next));
-        return next;
-	}
+  /**
+   * Constructor which creates cash register with the cash passed in as parameter.
+   */
+  public SimpleCashRegister(final Cash cash) {
+    if (cash == null) {
+      throw new IllegalArgumentException(" Null has been passed in as required parameter: cash");
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Cash remove(Cash cash) throws NotSufficientFundsException {
-        Cash prev, next;
-        do {
-            prev = this.cashRef.get();
-            next = prev.subtract(cash);
-        } while (!this.cashRef.compareAndSet(prev, next));
-        return next;
-	}
+    this.cashRef = new AtomicReference<>(cash);
+    this.changeProducer = new DpChangeProducerStrategy();
+  }
 
-	/* (non-Javadoc)
-	 * @see org.hellochange.cash.CashRegister#change(java.lang.Integer)
-	 */
-	@Override
-	public Cash change(Integer amount) throws CannotProduceChangeException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public Cash getContents() {
+    return this.cashRef.get();
+  }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public Cash add(Cash cash) {
+    Cash prev, next;
+    do {
+      prev = this.cashRef.get();
+      next = prev.add(cash);
+    } while (!this.cashRef.compareAndSet(prev, next));
+    return next;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public Cash remove(Cash cash) throws NoSufficientFundsException {
+    Cash prev, next;
+    do {
+      prev = this.cashRef.get();
+      next = prev.subtract(cash);
+    } while (!this.cashRef.compareAndSet(prev, next));
+    return next;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public Cash change(Integer amount) {
+    Cash prev, next, change;
+    do {
+      prev = this.cashRef.get();
+      
+      final Solution solution = this.changeProducer.computeChange(prev, amount); 
+      next = solution.getRemainingCash();
+      change = solution.getChange();
+    } while (!this.cashRef.compareAndSet(prev, next));
+    return change;
+  }
 }
