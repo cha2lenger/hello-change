@@ -252,13 +252,13 @@ public final class Cash {
     
     if (origValueToUse == amount) {
       resultContents.remove(billDenomination);
-      return new Cash(resultContents);
+      return resultContents.isEmpty() ? EMPTY : new Cash(resultContents);
     }
     
     final Integer newValue = origValueToUse - amount;
     
     resultContents.put(billDenomination, newValue);
-    return resultContents.isEmpty() ? EMPTY : new Cash(resultContents);
+    return new Cash(resultContents);
   }  
 
   /**
