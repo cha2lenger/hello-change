@@ -4,6 +4,9 @@ import org.hellochange.cash.Cash;
 
 /**
  * Defines the solution of the change computation problem.
+ * 
+ * @author vladimir
+ * 
  */
 public class Solution {
   /** Change computed for the intermediate solution. */

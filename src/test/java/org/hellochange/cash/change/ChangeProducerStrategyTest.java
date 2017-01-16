@@ -18,7 +18,7 @@ import com.google.common.collect.ImmutableMap;
 /**
  * Tests change computation strategy.
  * 
- * @author vorlov
+ * @author vladimir
  *
  */
 public class ChangeProducerStrategyTest {

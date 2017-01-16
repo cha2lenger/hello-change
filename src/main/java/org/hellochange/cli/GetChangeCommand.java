@@ -3,7 +3,6 @@
  */
 package org.hellochange.cli;
 
-import org.hellochange.cash.BillDenomination;
 import org.hellochange.cash.Cash;
 import org.hellochange.cash.CashRegister;
 import org.hellochange.cli.proc.ArgsValidationException;
