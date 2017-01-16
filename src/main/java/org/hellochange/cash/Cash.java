@@ -258,7 +258,7 @@ public final class Cash {
     final Integer newValue = origValueToUse - amount;
     
     resultContents.put(billDenomination, newValue);
-    return new Cash(resultContents);
+    return resultContents.isEmpty() ? EMPTY : new Cash(resultContents);
   }  
 
   /**
