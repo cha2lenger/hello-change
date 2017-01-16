@@ -34,7 +34,7 @@ public class SimpleCashRegister implements CashRegister {
    */
   public SimpleCashRegister(final Cash cash) {
     if (cash == null) {
-      throw new IllegalArgumentException(" Null has been passed in as required parameter: cash");
+      throw new IllegalArgumentException("Null has been passed in as required parameter: cash");
     }
 
     this.cashRef = new AtomicReference<>(cash);
@@ -83,8 +83,11 @@ public class SimpleCashRegister implements CashRegister {
     Cash prev, next, change;
     do {
       prev = this.cashRef.get();
-      
+     
       final Solution solution = this.changeProducer.computeChange(prev, amount); 
+      if (solution == null) {
+        return null;
+      }
       next = solution.getRemainingCash();
       change = solution.getChange();
     } while (!this.cashRef.compareAndSet(prev, next));

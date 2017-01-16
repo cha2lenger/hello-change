@@ -3,6 +3,11 @@
  */
 package org.hellochange.cash;
 
+import java.util.Arrays;
+import java.util.List;
+
+import com.google.common.collect.Lists;
+
 /**
  * Represents supported bill denominations.
  * 
@@ -14,6 +19,9 @@ public enum BillDenomination {
 
   /** Actual denomination of the bill. */
   private final int denomination;
+  
+  /** Bill denominations in  their reversed order */
+  public final static List<BillDenomination> denominationsReversed = Lists.reverse(Arrays.asList(values()));
 
   /**
    * Constructor.

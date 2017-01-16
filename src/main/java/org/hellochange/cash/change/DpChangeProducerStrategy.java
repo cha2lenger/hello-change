@@ -22,16 +22,19 @@ public class DpChangeProducerStrategy implements ChangeProducerStrategy {
    * {@inheritDoc}
    */
   @Override
-  public Solution computeChange(final Cash registerContents, final int changeAmount) {
-    if (registerContents == null) {
-      throw new IllegalArgumentException(" Null has been passed in as required parameter: registerContents");
+  public Solution computeChange(final Cash availableCash, final int changeAmount) {
+    if (availableCash == null) {
+      throw new IllegalArgumentException("Null has been passed in as required parameter: availableCash");
     }
-    if (changeAmount <= 0) {
-      throw new IllegalArgumentException(String.format(" Zero or negative value has been passed in for changeAmount parameter: %1$d", changeAmount));
+    if (changeAmount < 0) {
+      throw new IllegalArgumentException(String.format("Negative value has been passed in for changeAmount parameter: %1$d", changeAmount));
+    }
+    if (changeAmount == 0) {
+      return new Solution(availableCash);
     }
 
     // check some margin scenarios first
-    if (changeAmount > registerContents.getMoneyAmount()) {
+    if (changeAmount > availableCash.getMoneyAmount()) {
       return null;
     }
 
@@ -48,7 +51,7 @@ public class DpChangeProducerStrategy implements ChangeProducerStrategy {
         }
 
         if (subProblemSize == 0) {
-          final Solution newSolution = nextSolution(new Solution(registerContents), nextDenomination);
+          final Solution newSolution = nextSolution(new Solution(availableCash), nextDenomination);
           if (newSolution != null) {
             optimalSolution = newSolution;
           }

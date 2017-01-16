@@ -44,9 +44,19 @@ public class ChangeProducerStrategyTest {
   /**
    * Tests the case when zero is passed in as change amount.
    */
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void testZeroCash() {
-    this.strategy.computeChange(Cash.EMPTY, 0);
+    final Cash availCash = Cash.newInstance(ImmutableMap.of(BillDenomination.FIVE, 5, BillDenomination.ONE, 3));
+    
+    final Solution solution = this.strategy.computeChange(availCash, 0);
+    assertNotNull(solution);
+    
+    final Cash change = solution.getChange();
+    final Cash remainingCash = solution.getRemainingCash();  
+    
+    assertEquals(Cash.EMPTY, change);
+    assertEquals(availCash, remainingCash);
+    assertEquals(availCash, remainingCash.add(change));
   }  
   
   /**

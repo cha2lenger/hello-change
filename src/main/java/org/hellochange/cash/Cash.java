@@ -45,7 +45,7 @@ public final class Cash {
       final int amount = nextEntry.getValue();
       final BillDenomination denomination = nextEntry.getKey();
       if (amount < 0) {
-        throw new IllegalArgumentException(String.format(" Negative amount of bills [%1$d] was passed in" + " as input parameter for denomination %2$s", amount, denomination));
+        throw new IllegalArgumentException(String.format("Negative amount of bills [%1$d] was passed in" + " as input parameter for denomination %2$s", amount, denomination));
       }
 
       if (amount == 0) {
@@ -212,7 +212,7 @@ public final class Cash {
       final int otherAmountToUse = otherAmount != null ? otherAmount : 0;
 
       if (thisAmountToUse < otherAmountToUse) {
-        throw new NoSufficientFundsException(" Not sufficient amount of bills to complete subtraction. ", nextDenomination, otherAmountToUse, thisAmountToUse);
+        throw new NoSufficientFundsException("Not sufficient amount of bills to complete subtraction. ", nextDenomination, otherAmountToUse, thisAmountToUse);
       }
 
       if (thisAmountToUse == otherAmountToUse) {
@@ -247,7 +247,7 @@ public final class Cash {
     final int origValueToUse = origValue != null ? origValue : 0;
     
     if (origValueToUse < amount) {
-      throw new NoSufficientFundsException(" Not sufficient amount of bills to complete subtraction. ", billDenomination, amount, origValueToUse);
+      throw new NoSufficientFundsException("Not sufficient amount of bills to complete subtraction. ", billDenomination, amount, origValueToUse);
     }
     
     if (origValueToUse == amount) {
@@ -261,6 +261,23 @@ public final class Cash {
     return new Cash(resultContents);
   }  
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override  
+  public String toString() {
+    final StringBuilder output = new StringBuilder();
+    output.append(String.format("$%1$d", this.getMoneyAmount()));
+    
+    for (int i = 0; i < BillDenomination.denominationsReversed.size(); i++) {
+      final Integer billsNumber = this.contents.get(BillDenomination.denominationsReversed.get(i));
+      final int billsNumberToUse = billsNumber != null ? billsNumber : 0;
+      output.append(String.format(" %1$d", billsNumberToUse));
+    }
+    
+    return output.toString();
+  }  
+  
   /**
    * {@inheritDoc}
    */

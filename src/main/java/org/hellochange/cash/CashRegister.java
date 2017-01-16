@@ -38,7 +38,7 @@ public interface CashRegister {
    * For the change amount passed in computes, removes from register and returns corresponding Cash if available. Otherwise returns null.
    * 
    * @param amount - change amount.
-   * @return removed cash from register that corresponds to the change amount if available. Otherwise null.
+   * @return removed cash from register that corresponds to the change amount if such cash is available. Otherwise null.
    */
   Cash change(Integer amount);
 }
